@@ -1,4 +1,4 @@
-#listener.py
+#main.py
 
 from fastapi import FastAPI, Request
 import uvicorn
@@ -8,7 +8,14 @@ from gmail_watch_setup import setup_watch
 from starlette.responses import JSONResponse
 
 app = FastAPI()
-setup_watch()
+
+
+@app.get("/setup-gmail-watch")
+async def trigger_watch_setup():
+    setup_watch()
+    return {"status": "watch triggered"}
+
+
 @app.post("/gmail-pubsub")
 async def gmail_webhook(request: Request):
     data = await request.body()
@@ -20,6 +27,7 @@ async def gmail_webhook(request: Request):
     except Exception as e:
         print(f"Webhook Error: {e}")
         return JSONResponse(content={"error": "failed"}, status_code=500)
+    
     
 
 if __name__ == "__main__":
