@@ -28,9 +28,6 @@ def setup_watch():
     response = service.users().watch(userId='me', body=request_body).execute()
     print("Watch response:", response)
     
-    time.sleep(5)
-    os.system('cls')
-    
 
 if __name__ == "__main__":
     setup_watch()
