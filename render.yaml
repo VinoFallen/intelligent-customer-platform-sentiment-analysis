@@ -12,5 +12,5 @@ services:
 
 cronJobs:
   - name: refresh-gmail-watch
-    schedule: "0 6 * * 1"  # Every Monday 6 AM UTC
-    command: python -m app.gmail_watch_setup.py
+    schedule: "0 0 * * 1"  # Every Monday 6 AM UTC
+    command: python -m app.gmail_watch_setup

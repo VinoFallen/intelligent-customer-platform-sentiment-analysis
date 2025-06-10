@@ -1,6 +1,6 @@
 #main.py
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 import uvicorn
 import json
 from .gmail_reader import gmail_email_fetching
@@ -8,6 +8,17 @@ from .gmail_watch_setup import setup_watch
 from starlette.responses import JSONResponse
 
 app = FastAPI()
+
+
+@app.get("/")
+def root():
+    return {"message": "Gmail Pub/Sub listener is running."}
+
+
+@app.get("/favicon.ico")
+def favicon():
+    return Response(status_code=204)  # No Content
+
 
 
 @app.get("/setup-gmail-watch")
