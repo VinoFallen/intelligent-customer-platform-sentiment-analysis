@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: intelligent-customer-platform
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    envVars:
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        value: /etc/secrets/credentials.json
+      - key: GCP_PROJECT_ID
+        value: gmail-client-462105
+
+cronJobs:
+  - name: refresh-gmail-watch
+    schedule: "0 6 * * 1"  # Every Monday 6 AM UTC
+    command: python -m app.gmail_watch_setup
