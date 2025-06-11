@@ -1,16 +1,7 @@
-# Python virtual environments
-.venv/
-venv/
-
-# Python cache
-__pycache__/
-*.py[cod]
-
-# Logs
-*.log
-
-# Credentials
-credentials.json
 .env
+credentials.json
 pubsub-key.json
 app/token.json
+.venv/
+venv/
+__pycache__/
