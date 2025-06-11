@@ -6,7 +6,7 @@ import json
 from .gmail_reader import gmail_email_fetching
 from .gmail_watch_setup import setup_watch
 from starlette.responses import JSONResponse
-from database_functions import email_entry
+from .database_functions import email_entry
 
 app = FastAPI()
 
