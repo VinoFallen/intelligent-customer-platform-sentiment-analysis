@@ -11,31 +11,29 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 def gmail_email_authentication():
     creds = None
+    creds_path = "credentials.json"  # Local path
+    token_path = "token.json"        # Local path
 
-    # Set paths depending on environment
     if os.getenv("RENDER"):
-        os.makedirs("/mnt/data", exist_ok=True)
+        token_path = "/tmp/token.json"
+        creds_path = "/etc/secrets/credentials.json"
+        initial_token_secret_path = "/etc/secrets/token.json"
 
-    token_path = "/mnt/data/token.json"
-    creds_path = "/etc/secrets/credentials.json"
-    initial_token_secret_path = "/etc/secrets/token.json"
+        print(f"Render detected. Using token path: {token_path}")
+        print(f"Checking if token exists at {token_path}: {os.path.exists(token_path)}")
+        print(f"Checking if secret token exists at {initial_token_secret_path}: {os.path.exists(initial_token_secret_path)}")
 
-    print(f"Checking if token exists at {token_path}: {os.path.exists(token_path)}")
-    print(f"Checking if secret token exists at {initial_token_secret_path}: {os.path.exists(initial_token_secret_path)}")
+        # Copy token from secret if not already in /tmp
+        if not os.path.exists(token_path) and os.path.exists(initial_token_secret_path):
+            print("Copying token.json from secrets to /tmp...")
+            with open(initial_token_secret_path, 'r') as src, open(token_path, 'w') as dst:
+                dst.write(src.read())
 
-    if not os.path.exists(token_path) and os.path.exists(initial_token_secret_path):
-        print("Copying token.json from secrets to /mnt/data...")
-        with open(initial_token_secret_path, 'r') as src, open(token_path, 'w') as dst:
-            dst.write(src.read())
-    else:
-        token_path = "token.json"  # Local dev
-        creds_path = "credentials.json"  # Local secret
-
-    # Load credentials from token if it exists
+    # Load credentials from token
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
 
-    # Refresh or re-auth if token is invalid or missing
+    # Refresh or re-authenticate if needed
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             try:
@@ -46,15 +44,16 @@ def gmail_email_authentication():
                 print(f"Token refresh failed: {e}")
                 raise Exception("Token refresh failed. Re-authenticate locally and upload a new token.json as secret.")
         else:
-            # Only do this locally – not in Render
             if os.getenv("RENDER"):
                 raise Exception("No valid token. Re-authenticate locally and upload token.json as a secret.")
+            # Local flow
             flow = InstalledAppFlow.from_client_secrets_file(creds_path, SCOPES)
             creds = flow.run_local_server(port=0)
             with open(token_path, 'w') as token:
                 token.write(creds.to_json())
 
     return creds
+
 
 
 def get_gmail_email(creds, receive_email_id):
