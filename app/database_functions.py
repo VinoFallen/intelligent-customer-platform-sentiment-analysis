@@ -1,14 +1,14 @@
 from pymongo import MongoClient
 from datetime import datetime
 import re
+import dotenv, os
 
 # MongoDB URI
-uri = ""
-client = MongoClient(uri)
+MONGO_URI = os.getenv("MONGODB_URI")
+client = MongoClient(MONGO_URI)
 
 db = client["sentiment_db"]
 
-# {'id':msg_id, 'sender':sender, 'subject':subject, 'body':decoded_body, 'timestamp':timestamp}
 
 def email_entry(info_dict):
     try:

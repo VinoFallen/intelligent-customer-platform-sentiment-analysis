@@ -6,6 +6,7 @@ import json
 from .gmail_reader import gmail_email_fetching
 from .gmail_watch_setup import setup_watch
 from starlette.responses import JSONResponse
+from database_functions import email_entry
 
 app = FastAPI()
 
@@ -33,7 +34,8 @@ async def gmail_webhook(request: Request):
     try:
         envolope = json.loads(data)
         if "message" in envolope:
-            print(gmail_email_fetching("achalacharya01@gmail.com"))
+            email = gmail_email_fetching("achalacharya01@gmail.com")
+            email_entry(email)
             return JSONResponse(content={"status": "received"}, status_code=200)
     except Exception as e:
         print(f"Webhook Error: {e}")
