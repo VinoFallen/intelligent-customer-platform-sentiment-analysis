@@ -14,15 +14,19 @@ def gmail_email_authentication():
 
     # Set paths depending on environment
     if os.getenv("RENDER"):
-        token_path = "/mnt/data/token.json"  # Writable path
-        creds_path = "/etc/secrets/credentials.json"  # Read-only client secret
-        initial_token_secret_path = "/etc/secrets/token.json"  # Read-only backup token
+        os.makedirs("/mnt/data", exist_ok=True)
 
-        # First-time copy of token.json from secrets to writable location
-        if not os.path.exists(token_path) and os.path.exists(initial_token_secret_path):
-            with open(initial_token_secret_path, 'r') as src, open(token_path, 'w') as dst:
-                dst.write(src.read())
+    token_path = "/mnt/data/token.json"
+    creds_path = "/etc/secrets/credentials.json"
+    initial_token_secret_path = "/etc/secrets/token.json"
 
+    print(f"Checking if token exists at {token_path}: {os.path.exists(token_path)}")
+    print(f"Checking if secret token exists at {initial_token_secret_path}: {os.path.exists(initial_token_secret_path)}")
+
+    if not os.path.exists(token_path) and os.path.exists(initial_token_secret_path):
+        print("Copying token.json from secrets to /mnt/data...")
+        with open(initial_token_secret_path, 'r') as src, open(token_path, 'w') as dst:
+            dst.write(src.read())
     else:
         token_path = "token.json"  # Local dev
         creds_path = "credentials.json"  # Local secret
