@@ -14,21 +14,30 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 
 def gmail_email_authentication():
-    # Authenticate and return the Gmail service.
     creds = None
-    # Check if token.json exists for stored credentials, if not, create it.
-    if os.path.exists("token.json"):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
+    token_path = "/etc/secrets/token.json"
+    credentials_path = "/etc/secrets/credentials.json"
+
+    # Load token from secure location
+    if os.path.exists(token_path):
+        creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+    
+    # Try to refresh if needed
+    if creds and creds.expired and creds.refresh_token:
+        try:
             creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                '/etc/secrets/credentials.json', SCOPES
-            )
-            creds = flow.run_local_server(port=0)
-        with open("token.json", 'w') as token:
-            token.write(creds.to_json())
+            # Save the refreshed token
+            with open(token_path, 'w') as token_file:
+                token_file.write(creds.to_json())
+        except Exception as e:
+            print("Token refresh failed:", e)
+            raise RuntimeError("Token refresh failed. Re-authenticate locally.")
+    
+    # If no token or invalid and can't refresh
+    if not creds or not creds.valid:
+        raise RuntimeError(
+            "Missing or invalid token. Please run local OAuth flow to generate token.json."
+        )
     
     return creds
         
