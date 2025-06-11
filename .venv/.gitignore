@@ -1,0 +1,16 @@
+# Python virtual environments
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+
+# Credentials
+credentials.json
+.env
+pubsub-key.json
+app/token.json
