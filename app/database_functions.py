@@ -52,26 +52,16 @@ def email_entry(info_dict):
         collection_name = sender_mail
         collection_names = db.list_collection_names()
 
-        if collection_name not in collection_names:
+        collection = db[collection_name]
 
-            collection = db[collection_name]
-            # Create new collection and insert two documents
+        if collection_name not in collection_names:
             collection.insert_one({
                 "sender_name": sender_name
             })
-            collection.insert_one({
-                "_id": e_id,
-                "subject": subject,
-                "body": body,
-                "sentiment_score": sentiment_score,
-                "sentiment_category": sentiment_category,
-                "date": date,
-                "time": time
-            })
-            print(f"Collection '{collection_name}' created and documents inserted.")
+
+        if collection.find_one({"_id": e_id}):
+            print(f"Duplicate entry with _id {e_id} already exists. Skipping insertion.")
         else:
-            collection = db[collection_name]
-            # Collection exists, insert email entry only
             collection.insert_one({
                 "_id": e_id,
                 "subject": subject,
@@ -81,7 +71,8 @@ def email_entry(info_dict):
                 "date": date,
                 "time": time
             })
-            print(f"Entry added to existing collection '{collection_name}'.")
+            print(f"Entry added to collection '{collection_name}' with _id {e_id}.")
+
 
         return True 
 
@@ -90,33 +81,5 @@ def email_entry(info_dict):
         return False  
 
 
-# def get_email_entries(email):
-#     try:
-#         collection_name = email
-#         if collection_name not in db.list_collection_names():
-#             print(f"No collection named '{collection_name}' found.")
-#             return None
-
-#         collection = db[collection_name]
-#         documents = list(collection.find())
-
-#         if not documents:
-#             print("Collection is empty.")
-#             return None
-
-#         # First document contains id and sender
-#         info = {
-#             "sender": documents[0].get("sender")
-#         }
-
-#         # Remaining documents are email entries
-#         email_entries = documents[1:]  # All documents except the first
-
-#         return info, email_entries
-        
-
-#     except Exception as e:
-#         print(f"Error retrieving email entries: {e}")
-#         return None
 
 
