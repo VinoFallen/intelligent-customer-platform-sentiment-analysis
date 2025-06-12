@@ -11,8 +11,8 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 def gmail_email_authentication():
     creds = None
-    creds_path = "credentials.json"  # Local path
-    token_path = "token.json"        # Local path
+    creds_path = "credentials.json"  
+    token_path = "token.json"        
 
     if os.getenv("RENDER"):
         token_path = "/tmp/token.json"
