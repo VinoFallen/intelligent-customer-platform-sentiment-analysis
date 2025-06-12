@@ -35,6 +35,7 @@ async def gmail_webhook(request: Request):
         envolope = json.loads(data)
         if "message" in envolope:
             email = gmail_email_fetching("achalacharya01@gmail.com")
+            print(email)
             email_entry(email)
             return JSONResponse(content={"status": "received"}, status_code=200)
     except Exception as e:
