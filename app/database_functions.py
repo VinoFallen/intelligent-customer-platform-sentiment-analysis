@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime
+from dateutil import parser as date_parser
 import re
 import dotenv, os
 
@@ -40,7 +41,7 @@ def email_entry(info_dict):
 
         # --- Convert timestamp to date and time ---
         if timestamp is not None:
-            dt = datetime.fromtimestamp(float(timestamp))
+            dt = date_parser.parse(timestamp)
             date = dt.strftime("%Y-%m-%d")
             time = dt.strftime("%H:%M:%S")
         else:
