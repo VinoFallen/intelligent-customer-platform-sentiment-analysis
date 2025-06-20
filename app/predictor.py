@@ -1,17 +1,22 @@
-# predictor.py
+# /app/predictor.py
 
+from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import torch.nn.functional as F
 
-MODEL_PATH = "./deberta-finetuned"  
+# Dynamically resolve the model path
+MODEL_PATH = Path(__file__).parent / "debertaFinetunedFinal"
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, local_files_only=True)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH, local_files_only=True)
 
+# Move model to GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 model.eval()
+
 
 id2label = {
     0: "Positive",
@@ -24,7 +29,8 @@ def predict_sentiment(text: str):
     if not text or not isinstance(text, str):
         return {"label": "Invalid", "confidence": 0.0}
 
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True).to(device)
+    # Tokenize and send to device
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512).to(device)
 
     with torch.no_grad():
         outputs = model(**inputs)
@@ -39,8 +45,9 @@ def predict_sentiment(text: str):
 
 
 if __name__ == "__main__":
-    email_example_text = '''Hey team,  We’d appreciate an update on the status of Integrated composite paradigm.''' #Neutral (Action-Oriented)
+    email_example_text = "Thank you for the update, can you send me the audit report?"  
     prediction = predict_sentiment(email_example_text)
     
-    print(prediction['label'])
-    print(prediction['confidence'])
+    print(prediction)
+    print("Label:", prediction["label"])
+    print("Confidence:", prediction["confidence"])
