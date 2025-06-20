@@ -1,10 +1,5 @@
 #gmail_watch_setup.py
 
-
-import subprocess
-import time
-import os
-import requests
 from googleapiclient.discovery import build
 from .gmail_reader import gmail_email_authentication
 from google.cloud import pubsub_v1
