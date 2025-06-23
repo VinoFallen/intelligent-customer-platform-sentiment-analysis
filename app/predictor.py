@@ -1,16 +1,22 @@
 # /app/predictor.py
 
 from pathlib import Path
+from huggingface_hub import login
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
+import os
 import torch.nn.functional as F
+from dotenv import load_dotenv
 
+load_dotenv()
 # Dynamically resolve the model path
-MODEL_PATH = Path(__file__).parent / "debertaFinetunedFinal"
+login(token=os.getenv("HF_TOKEN"))
+
+model_repo = "ValInk/debertaFinetunedFinal"
 
 # Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, local_files_only=True)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH, local_files_only=True)
+tokenizer = AutoTokenizer.from_pretrained(model_repo)
+model = AutoModelForSequenceClassification.from_pretrained(model_repo)
 
 # Move model to GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
