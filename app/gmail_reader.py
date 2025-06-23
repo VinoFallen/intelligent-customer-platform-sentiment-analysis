@@ -13,10 +13,9 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 def gmail_email_authentication():
     creds = None
-    creds_path = "credentials.json"  
-    token_path = "token.json"        
 
-    if os.getenv("RENDER"):
+    is_render = os.getenv("RENDER", "").lower() == "true"  # safer
+    if is_render:
         token_path = "/tmp/token.json"
         creds_path = "/etc/secrets/credentials.json"
         initial_token_secret_path = "/etc/secrets/token.json"
@@ -30,12 +29,15 @@ def gmail_email_authentication():
             print("Copying token.json from secrets to /tmp...")
             with open(initial_token_secret_path, 'r') as src, open(token_path, 'w') as dst:
                 dst.write(src.read())
+    else:
+        token_path = "token.json"
+        creds_path = "credentials.json"
 
-    # Load credentials from token
+    # Load token file
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
 
-    # Refresh or re-authenticate if needed
+    # Refresh or run auth flow
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             try:
@@ -46,15 +48,16 @@ def gmail_email_authentication():
                 print(f"Token refresh failed: {e}")
                 raise Exception("Token refresh failed. Re-authenticate locally and upload a new token.json as secret.")
         else:
-            if os.getenv("RENDER"):
+            if is_render:
                 raise Exception("No valid token. Re-authenticate locally and upload token.json as a secret.")
-            # Local flow
+            # Local auth flow
             flow = InstalledAppFlow.from_client_secrets_file(creds_path, SCOPES)
             creds = flow.run_local_server(port=0)
             with open(token_path, 'w') as token:
                 token.write(creds.to_json())
 
     return creds
+
 
 
 
