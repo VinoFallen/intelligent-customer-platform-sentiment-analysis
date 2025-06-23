@@ -1,29 +1,17 @@
 # /app/predictor.py
-
-from pathlib import Path
-from huggingface_hub import login
+from fastapi import FastAPI
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-import os
 import torch.nn.functional as F
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
-# Dynamically resolve the model path
-login(token=os.getenv("HF_TOKEN"))
+app = FastAPI()
 
-model_repo = "ValInk/debertaFinetunedFinal"
-
-# Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained(model_repo)
-model = AutoModelForSequenceClassification.from_pretrained(model_repo)
-
-# Move model to GPU if available
+model = None
+tokenizer = None
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
-model.eval()
-
-
 id2label = {
     0: "Positive",
     1: "Negative",
@@ -31,15 +19,24 @@ id2label = {
     3: "Neutral (Action-Oriented)",
 }
 
+
+@app.on_event("startup")
+def load_model():
+    global model, tokenizer
+    model = AutoModelForSequenceClassification.from_pretrained("ValInk/debertaFinetunedFinal",token=os.getenv("HF_TOKEN"))
+    tokenizer = AutoTokenizer.from_pretrained("ValInk/debertaFinetunedFinal",token=os.getenv("HF_TOKEN"))
+    model.to(device)
+    model.eval()
+
+
 def predict_sentiment(text: str):
     if not text or not isinstance(text, str):
         return {"label": "Invalid", "confidence": 0.0}
 
-    # Tokenize and send to device
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512).to(device)
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512).to(device) # type: ignore
 
     with torch.no_grad():
-        outputs = model(**inputs)
+        outputs = model(**inputs) # type: ignore
         probs = F.softmax(outputs.logits, dim=-1)
         pred = torch.argmax(probs, dim=-1).item()
         confidence = probs[0][int(pred)].item()
@@ -49,11 +46,9 @@ def predict_sentiment(text: str):
         "confidence": round(confidence, 4)
     }
 
-
+# For local testing
 if __name__ == "__main__":
-    email_example_text = "Thank you for the update, can you send me the audit report?"  
-    prediction = predict_sentiment(email_example_text)
-    
-    print(prediction)
-    print("Label:", prediction["label"])
-    print("Confidence:", prediction["confidence"])
+    load_model()
+    test_text = "Thank you for the update, can you send me the audit report?"
+    result = predict_sentiment(test_text)
+    print(result)

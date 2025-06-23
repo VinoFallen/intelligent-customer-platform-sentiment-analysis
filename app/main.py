@@ -10,6 +10,10 @@ from .database_functions import email_entry
 
 app = FastAPI()
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 
 @app.get("/")
 def root():
