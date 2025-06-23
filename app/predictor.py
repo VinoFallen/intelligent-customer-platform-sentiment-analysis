@@ -1,5 +1,4 @@
-# /app/predictor.py
-from fastapi import FastAPI
+# predictor.py
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import torch.nn.functional as F
@@ -7,7 +6,6 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-app = FastAPI()
 
 model = None
 tokenizer = None
@@ -19,24 +17,27 @@ id2label = {
     3: "Neutral (Action-Oriented)",
 }
 
-
-@app.on_event("startup")
-def load_model():
+def initialize_model():
     global model, tokenizer
-    model = AutoModelForSequenceClassification.from_pretrained("ValInk/debertaFinetunedFinal",token=os.getenv("HF_TOKEN"))
-    tokenizer = AutoTokenizer.from_pretrained("ValInk/debertaFinetunedFinal",token=os.getenv("HF_TOKEN"))
-    model.to(device)
-    model.eval()
-
+    if model is None or tokenizer is None:
+        model = AutoModelForSequenceClassification.from_pretrained(
+            "ValInk/debertaFinetunedFinal", token=os.getenv("HF_TOKEN")
+        )
+        tokenizer = AutoTokenizer.from_pretrained(
+            "ValInk/debertaFinetunedFinal", token=os.getenv("HF_TOKEN")
+        )
+        model.to(device)
+        model.eval()
 
 def predict_sentiment(text: str):
+    initialize_model()
     if not text or not isinstance(text, str):
         return {"label": "Invalid", "confidence": 0.0}
 
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512).to(device) # type: ignore
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512).to(device)  # type: ignore
 
     with torch.no_grad():
-        outputs = model(**inputs) # type: ignore
+        outputs = model(**inputs)  # type: ignore
         probs = F.softmax(outputs.logits, dim=-1)
         pred = torch.argmax(probs, dim=-1).item()
         confidence = probs[0][int(pred)].item()
@@ -46,9 +47,10 @@ def predict_sentiment(text: str):
         "confidence": round(confidence, 4)
     }
 
+
 # For local testing
-if __name__ == "__main__":
-    load_model()
-    test_text = "Thank you for the update, can you send me the audit report?"
-    result = predict_sentiment(test_text)
-    print(result)
+# if __name__ == "__main__":
+#     load_model()
+#     test_text = "Thank you for the update, can you send me the audit report?"
+#     result = predict_sentiment(test_text)
+#     print(result)
