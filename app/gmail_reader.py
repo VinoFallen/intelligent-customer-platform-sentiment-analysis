@@ -122,5 +122,4 @@ def gmail_email_fetching(email):
 
 
 if __name__ == "__main__":
-    # This line will only be used in local development
     print(gmail_email_fetching('achalacharya01@gmail.com'))

@@ -8,7 +8,7 @@ import dotenv, os
 from .predictor import predict_sentiment
 from .summarizer_api import summarize_email
 
-# MongoDB URI
+
 dotenv.load_dotenv()
 MONGO_URI = os.getenv("MONGODB_URI")
 client = MongoClient(MONGO_URI)
