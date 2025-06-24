@@ -115,10 +115,16 @@ def email_entry(info_dict):
         trend_collection_name = f"{sender_mail}_trend"
         trend_collection = db[trend_collection_name]
 
-        trend_collection.insert_one({
-            "timestamp": f"{date} {time}",
-            "total_sentiment": new_total_sentiment
-        })
+        # Only insert trend if this email hasn't already been tracked
+        if not trend_collection.find_one({"_id": e_id}):
+            trend_collection.insert_one({
+                "_id": e_id,
+                "timestamp": f"{date} {time}",
+                "total_sentiment": new_total_sentiment
+            })
+        else:
+            print(f"Trend already tracked for email_id {e_id}, skipping.")
+
 
 
 

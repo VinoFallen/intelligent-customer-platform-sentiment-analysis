@@ -28,6 +28,8 @@ def initialize_model():
         )
         model.to(device)
         model.eval()
+        print("✅ Model loaded.")
+
 
 def predict_sentiment(text: str):
     initialize_model()
