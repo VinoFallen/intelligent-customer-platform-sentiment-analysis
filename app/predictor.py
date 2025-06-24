@@ -21,10 +21,10 @@ def initialize_model():
     global model, tokenizer
     if model is None or tokenizer is None:
         model = AutoModelForSequenceClassification.from_pretrained(
-            "ValInk/debertaFinetunedFinal", token=os.getenv("HF_TOKEN")
+            "ValInk/debertaXsmallFinetuned", token=os.getenv("HF_TOKEN")
         )
         tokenizer = AutoTokenizer.from_pretrained(
-            "ValInk/debertaFinetunedFinal", token=os.getenv("HF_TOKEN")
+            "ValInk/debertaXsmallFinetuned", token=os.getenv("HF_TOKEN")
         )
         model.to(device)
         model.eval()
