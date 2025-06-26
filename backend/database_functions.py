@@ -97,9 +97,17 @@ def email_entry(info_dict):
             })
 
             if not is_new_collection:
+                metadata_doc = collection.find_one({"_id": "metadata"})
+                if metadata_doc is not None:
+                    current_total = metadata_doc.get("total_sentiment", 0)
+                else:
+                    current_total = 0
+                new_total = current_total + sentiment_score
+                new_total_clamped = max(0, min(100, new_total))
+
                 collection.update_one(
                     {"_id": "metadata"},
-                    {"$inc": {"total_sentiment": sentiment_score}}
+                    {"$set": {"total_sentiment": new_total_clamped}}
                 )
 
         # --- Track sentiment trend ---

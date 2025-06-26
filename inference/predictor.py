@@ -27,10 +27,10 @@ def load_model():
         
         
         model = AutoModelForSequenceClassification.from_pretrained(
-            "ValInk/debertaXsmallFinetuned", token=os.getenv("HF_TOKEN")
+            "ValInk/debertaBaseFinetuned", token=os.getenv("HF_TOKEN")
         ).to(device)
         tokenizer = AutoTokenizer.from_pretrained(
-            "ValInk/debertaXsmallFinetuned", token=os.getenv("HF_TOKEN")
+            "ValInk/debertaBaseFinetuned", token=os.getenv("HF_TOKEN")
         )
         model.eval()
         print("Model loaded and ready.")
