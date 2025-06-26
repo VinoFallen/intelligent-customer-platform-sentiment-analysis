@@ -1,7 +1,7 @@
 #/backend/gmail_watch_setup.py
 
 from googleapiclient.discovery import build
-from .gmail_reader import gmail_email_authentication
+from gmail_reader import gmail_email_authentication
 from google.cloud import pubsub_v1
 
 TOPIC_NAME = "projects/gmail-client-462105/topics/gmail_notify_topic"

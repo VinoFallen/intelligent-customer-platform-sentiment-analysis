@@ -4,9 +4,9 @@ from fastapi import FastAPI, Request, Response
 from starlette.responses import JSONResponse
 import json
 import asyncio
-from .gmail_reader import gmail_email_fetching
-from .gmail_watch_setup import setup_watch
-from .database_functions import email_entry
+from gmail_reader import gmail_email_fetching
+from gmail_watch_setup import setup_watch
+from database_functions import email_entry
 
 app = FastAPI()
 processing_lock = asyncio.Lock()

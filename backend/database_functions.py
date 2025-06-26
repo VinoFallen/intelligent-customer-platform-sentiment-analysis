@@ -6,7 +6,7 @@ from dateutil import parser as date_parser
 import re
 import dotenv
 import os
-from .api_client import analyze_sentiment_and_summary
+from api_client import analyze_sentiment_and_summary
 
 dotenv.load_dotenv()
 MONGO_URI = os.getenv("MONGODB_URI")
