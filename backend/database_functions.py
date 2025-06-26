@@ -92,8 +92,7 @@ def email_entry(info_dict):
                 "sentiment_category": sentiment_category,
                 "summary": summary_of_email,
                 "action": bestCourseOfAction,
-                "date": date,
-                "time": time
+                "timestamp": f"{date} {time}"
             })
 
             if not is_new_collection:
