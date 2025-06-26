@@ -5,6 +5,8 @@ import torch.nn.functional as F
 import os
 from dotenv import load_dotenv
 
+os.environ["TRANSFORMERS_CACHE"] = "/tmp/hf"
+
 load_dotenv()
 
 model = None
@@ -22,6 +24,8 @@ def load_model():
     global model, tokenizer
     if model is None or tokenizer is None:
         print("Loading model into memory...")
+        
+        
         model = AutoModelForSequenceClassification.from_pretrained(
             "ValInk/debertaXsmallFinetuned", token=os.getenv("HF_TOKEN")
         ).to(device)

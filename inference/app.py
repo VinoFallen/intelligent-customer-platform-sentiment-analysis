@@ -1,8 +1,8 @@
 # /inference/app.py
 
 from fastapi import FastAPI, Request
-from .predictor import predict_sentiment, load_model
-from .summarizer_api import summarize_email
+from predictor import predict_sentiment, load_model
+from summarizer_api import summarize_email
 import uvicorn
 
 app = FastAPI()
