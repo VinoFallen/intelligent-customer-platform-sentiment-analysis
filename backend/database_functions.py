@@ -102,11 +102,10 @@ def email_entry(info_dict):
                 else:
                     current_total = 0
                 new_total = current_total + sentiment_score
-                new_total_clamped = max(0, min(100, new_total))
 
                 collection.update_one(
                     {"_id": "metadata"},
-                    {"$set": {"total_sentiment": new_total_clamped}}
+                    {"$set": {"total_sentiment": new_total}}
                 )
 
         # --- Track sentiment trend ---
