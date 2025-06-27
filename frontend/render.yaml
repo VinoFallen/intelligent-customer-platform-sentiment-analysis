@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: intelligent-customer-frontend
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "streamlit run Home.py"
+    envVars:
+      - key: STREAMLIT_SERVER_ADDRESS
+        value: "0.0.0.0"
+    plan: free
