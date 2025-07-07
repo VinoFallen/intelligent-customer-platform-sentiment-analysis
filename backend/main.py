@@ -11,6 +11,12 @@ from database_functions import email_entry
 app = FastAPI()
 processing_lock = asyncio.Lock()
 
+MONITORED_EMAILS = [
+    "achalacharya01@gmail.com",
+    "nnm22am019@nmamit.in",
+    "akshithk56@gmail.com"
+]
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -35,9 +41,10 @@ async def gmail_webhook(request: Request):
         envelope = json.loads(data)
         if "message" in envelope:
             async with processing_lock:
-                email = gmail_email_fetching("achalacharya01@gmail.com")
-                print(email)
-                email_entry(email)
+                for monitored_email in MONITORED_EMAILS:
+                    email = gmail_email_fetching(monitored_email)
+                    print(email)
+                    email_entry(email)
                 return JSONResponse(content={"status": "processed"}, status_code=200)
     except Exception as e:
         print(f"Webhook Error: {e}")

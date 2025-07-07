@@ -124,5 +124,5 @@ def gmail_email_fetching(email):
         return get_gmail_email(creds, email)
 
 
-# if __name__ == "__main__":
-#     print(gmail_email_fetching('achalacharya01@gmail.com'))
+if __name__ == "__main__":
+    print(gmail_email_fetching('achalacharya01@gmail.com'))
