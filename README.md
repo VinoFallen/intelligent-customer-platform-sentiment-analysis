@@ -2,20 +2,6 @@
 
 *Transform Customer Insights into Actionable Sentiment Power*
 
-> 🕒 last commit: last monday  🐍 python: 100.0%  🗣️ languages: 2  
-> **Built with the tools and technologies:**  
-> 📦 JSON 📝 Markdown 🐳 Docker 🐍 Python 📄 YAML
-
----
-
-## Table of Contents
-- [Overview](#overview)  
-- [Getting Started](#getting-started)  
-  - Prerequisites  
-  - Installation  
-- [Usage](#usage)  
-- [Testing](#testing)
-
 ---
 
 ## Overview
