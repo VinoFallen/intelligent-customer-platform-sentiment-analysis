@@ -17,3 +17,6 @@ This project empowers developers to build intelligent, scalable systems for moni
 - 🧩 **Modular Architecture**: Clear API endpoints and background tasks facilitate easy customization and deployment.
 - 🚀 **Flexible Deployment**: Supports cloud-native and containerized environments with detailed configuration files.
 - 📊 **Data Insights**: Stores and tracks email trends and sentiment shifts over time using MongoDB.
+
+
+https://frontend-streamlit-b0ja.onrender.com
